@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime, timezone
 
 import boto3
@@ -39,7 +40,7 @@ def upload_to_s3(data: dict, symbol: str) -> None:
     key = (
         f"market_prices/"
         f"ingestion_date={datetime.now(timezone.utc).date()}/"
-        f"{symbol}_{timestamp}.json"
+        f"{symbol}.json"
     )
 
     s3.put_object(
@@ -70,6 +71,8 @@ def main():
             continue
 
         upload_to_s3(data, symbol)
+
+        time.sleep(1.5)
 
 
 if __name__ == "__main__":

@@ -5,3 +5,4 @@ __pycache__/
 .vscode/
 cdk.out/
 *.egg-info/
+data/
