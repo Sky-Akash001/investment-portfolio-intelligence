@@ -20,7 +20,7 @@ df = spark.read.json(RAW_PATH)
 df = df.select(
     F.regexp_extract(
         F.input_file_name(),
-        r"/([^/]+)\.json$",
+        r"/([A-Z]+)_\d{8}T\d{6}Z\.json$",
         1
     ).alias("symbol"),
     F.from_json(
