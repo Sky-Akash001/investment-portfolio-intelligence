@@ -43,7 +43,26 @@ df = df.select(
     F.col("price_data.`4. close`").cast("double").alias("close"),
     F.col("price_data.`5. volume`").cast("long").alias("volume")
 )
+df.createOrReplaceTempView("market_prices_temp")
 
-df.write.mode("overwrite").parquet(PROCESSED_PATH)
+spark.sql("""
+    CREATE TABLE IF NOT EXISTS glue_catalog.investment_portfolio.market_prices
+    (
+        symbol STRING,
+        price_date DATE,
+        open DOUBLE,
+        high DOUBLE,
+        low DOUBLE,
+        close DOUBLE,
+        volume BIGINT
+    )
+    USING iceberg
+    PARTITIONED BY (days(price_date))
+    LOCATION 's3://investment-portfolio-raw-data/iceberg/market_prices/'
+""")
+
+df.writeTo(
+    "glue_catalog.investment_portfolio.market_prices"
+).append()
 
 job.commit()
